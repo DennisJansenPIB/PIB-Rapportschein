@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0045)file:///C:/Users/janse/Downloads/index_8.html -->
+<!-- saved from url=(0045)file:///C:/Users/janse/Downloads/index_9.html -->
 <html lang="de"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="PIB Rapport">
 <meta name="theme-color" content="#2E7D32">
 <title>PIB Rapportschein</title>
-<link rel="manifest" id="manifest-placeholder" href="blob:null/7f7d1142-7ddf-4be5-9177-00da770aa3c2">
+<link rel="manifest" id="manifest-placeholder" href="blob:null/405a6aaa-d56a-42fe-8ea3-bac366f6d8a1">
 <style>
 /* ===== TOKENS ===== */
 :root {
@@ -732,6 +732,12 @@ textarea { resize: vertical; min-height: 80px; }
     </div>
   </div>
 
+  <!-- RAPPORT NR -->
+  <div style="background:var(--c-green); color:white; border-radius:var(--radius-s); padding:8px 16px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;">
+    <span style="font-size:12px; opacity:0.85;">Rapportnummer</span>
+    <span id="rapportNrDisplay" style="font-weight:800; font-size:14px; letter-spacing:1px;">PIB-20260811-2019</span>
+  </div>
+
   <!-- 2. KUNDE -->
   <div class="card section-anchor" id="sec-customer">
     <div class="card-title"><span class="icon">📍</span> <span id="t-customer">Objekt / Kunde</span></div>
@@ -1319,6 +1325,19 @@ var VEHICLES = ['PKW','Transporter','Anhänger','Lkw','Aufsitzmäher','Kehrmasch
 //  STATE
 // ============================================================
 var selectedName = null;
+var rapportNummer = '';
+
+function generateRapportNr() {
+  var now = new Date();
+  var y = now.getFullYear();
+  var m = String(now.getMonth()+1).padStart(2,'0');
+  var d = String(now.getDate()).padStart(2,'0');
+  var h = String(now.getHours()).padStart(2,'0');
+  var min = String(now.getMinutes()).padStart(2,'0');
+  rapportNummer = 'PIB-' + y + m + d + '-' + h + min;
+  var el = document.getElementById('rapportNrDisplay');
+  if (el) el.textContent = rapportNummer;
+}
 var selectedCustomer = null;
 var teamSelected = new Set();
 var selectedActivities = new Set();
@@ -1460,6 +1479,7 @@ function init() {
   initSignatures();
   initVoice();
   setupPWA();
+  generateRapportNr();
 
   // Show/hide pending note on status change
   document.querySelectorAll('input[name="jobStatus"]').forEach(function(r) {
@@ -2381,6 +2401,7 @@ function submitReport() {
     sigEmp: sigEmpData, sigCust: sigCustData,
     route: document.getElementById('routeInfo').textContent,
     jobStatus: jobStatus,
+      Rapportnummer: rapportNummer,
     pendingNote: pendingNote,
   };
 
@@ -2390,6 +2411,7 @@ function submitReport() {
 
   // Build message text
   var messageText =
+    'Rapportnummer: ' + rapportNummer + '\n\n' +
     'Guten Tag,\n\nbeiliegend der Rapportschein vom ' + dateFormatted + ' für ' + custName + '.\n\n' +
     'Mitarbeiter: ' + name + '\nArbeitszeit: ' + startTime + ' – ' + endTime + '\n' +
     '*** Stunden gesamt: ' + reportData.totalHours + ' ***\n' +
@@ -2411,6 +2433,7 @@ function submitReport() {
 
   fetch('https://script.google.com/macros/s/AKfycbyO9hD5fy0vVv3UlhnR3hNlfc269aOFqC_gndHnAFeOFjA6LX2vxJIcx-GHK-W4VUbtLg/exec', {
     method: 'POST',
+    mode: 'no-cors',
     headers: {'Content-Type': 'text/plain'},
     body: JSON.stringify({
       _subject: 'Rapportschein – ' + custName + ' – ' + dateFormatted,
@@ -2433,22 +2456,17 @@ function submitReport() {
       message: messageText
     })
   })
-  .then(function(res) {
+  .then(function() {
+    // no-cors: response is opaque, assume success
     submitBtn.disabled = false;
     submitBtn.innerHTML = '<span>📤</span> <span>' + T('submit') + '</span>';
-    if (res.ok) {
-      launchConfetti();
-      resetForm();
-      document.getElementById('mainForm').style.display = 'none';
-      document.getElementById('successScreen').classList.add('show');
-      document.getElementById('successTitle').textContent = T('successTitle');
-      document.getElementById('successSub').textContent = T('successSub');
-      document.getElementById('bottomNav').style.display = 'none';
-    } else {
-      res.json().then(function(data) {
-        alert('Fehler beim Senden: ' + (data.error || 'Unbekannter Fehler') + '\nBitte erneut versuchen.');
-      });
-    }
+    launchConfetti();
+    resetForm();
+    document.getElementById('mainForm').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    document.getElementById('successTitle').textContent = T('successTitle');
+    document.getElementById('successSub').textContent = T('successSub');
+    document.getElementById('bottomNav').style.display = 'none';
   })
   .catch(function() {
     submitBtn.disabled = false;
@@ -2567,6 +2585,7 @@ function resetForm() {
   document.getElementById('mainForm').style.display = '';
   document.getElementById('successScreen').classList.remove('show');
   window.scrollTo(0,0);
+  generateRapportNr();
 }
 
 // ============================================================
