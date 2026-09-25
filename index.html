@@ -775,20 +775,20 @@ textarea { resize: vertical; min-height: 80px; }
     </div>
     <div class="field-row" style="margin-top:12px">
       <label>Leistung im LV enthalten?</label>
-      <p class="hint" style="margin-top:-2px; margin-bottom:8px;">Prüfe im LV nach!</p>
+      <p class="hint" style="margin-top:-2px; margin-bottom:8px; color:#E65100; font-weight:600;">⚠️ Wichtig für PIB – bitte sorgfältig im LV nachschauen!</p>
       <div class="status-options">
         <label class="status-option">
           <input type="radio" name="lvEnthalten" id="lvEnthaltenNein" value="Nein">
           <div class="status-box status-pending">
             <span class="status-icon">⚠️</span>
-            <span class="status-text">Nein<br><small>Rechnung muss gestellt werden</small></span>
+            <span class="status-text">Nein<br><small>nicht im LV enthalten</small></span>
           </div>
         </label>
         <label class="status-option">
           <input type="radio" name="lvEnthalten" id="lvEnthaltenJa" value="Ja" checked>
           <div class="status-box status-done">
             <span class="status-icon">✅</span>
-            <span class="status-text">Ja<br><small>vertragliche Intervallarbeiten</small></span>
+            <span class="status-text">Ja<br><small>im LV enthalten</small></span>
           </div>
         </label>
       </div>
@@ -937,6 +937,8 @@ textarea { resize: vertical; min-height: 80px; }
           <option value="Stk.">Stk.</option>
           <option value="kg">kg</option>
           <option value="L">L</option>
+          <option value="eine Kappe 15ml">eine Kappe 15ml</option>
+          <option value="ml">ml</option>
           <option value="m²">m²</option>
           <option value="m">m</option>
           <option value="Sack">Sack</option>
